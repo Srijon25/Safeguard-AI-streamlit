@@ -71,6 +71,3 @@ if st.button("Get Current Risk Score"):
         st.success("Low Risk. You're safe.")
 
 
-Here's the full updated source code for your SafeGuard AI app, all in one place. It's now ready to deploy via Streamlit Cloud and show for your MIT application. Let me know if you need it as a downloadable .py file or want extra features added.
-
-
