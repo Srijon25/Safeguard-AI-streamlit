@@ -30,23 +30,23 @@ SafeGuard AI is a smart security tool designed to:
 
 ## 🗺️ Project Roadmap
 
-### ✅ Step 1: Crime Data Collection & Integration *(In Progress)*
+###  Step 1: Crime Data Collection & Integration 
 - Integrating APIs like **CrimeoMeter**, **UNODC**
 - Fetching real-time statistics
 
-### 🔜 Step 2: Crime Hotspot Mapping
+### Step 2: Crime Hotspot Mapping
 - Global map with high-risk zones
 - Color-coded threat levels
 
-### 🔜 Step 3: Safe Route Suggestion
+###  Step 3: Safe Route Suggestion
 - AI-powered Google Maps routing
 - Dynamic rerouting from risky areas
 
-### 🔜 Step 4: SOS & Emergency Alerts
+###  Step 4: SOS & Emergency Alerts
 - Voice-activated SOS trigger
 - Global emergency contact database
 
-### 🔜 Step 5: AI Risk Analysis & Prediction
+###  Step 5: AI Risk Analysis & Prediction
 - Predictive risk scores and alerts
 - Learning crime patterns by area
 
