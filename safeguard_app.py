@@ -1,70 +1,35 @@
-
 import streamlit as st
-from langchain.llms import Ollama
-from langchain.agents import initialize_agent, Tool
-from langchain.agents.agent_types import AgentType
-from langchain.tools import Tool
+import datetime
+import os
 
-# Counter file
-COUNTER_FILE = "visit_counter.txt"
+# File to store visitor count
+VISIT_FILE = "visit_counter.txt"
 
-def increment_counter():
-    try:
-        with open(COUNTER_FILE, "r") as file:
-            count = int(file.read().strip())
-    except:
-        count = 0
+# Initialize counter file if it doesn't exist
+if not os.path.exists(VISIT_FILE):
+    with open(VISIT_FILE, "w") as f:
+        f.write("0")
+
+# Read and update visitor count
+with open(VISIT_FILE, "r+") as f:
+    count = int(f.read())
     count += 1
-    with open(COUNTER_FILE, "w") as file:
-        file.write(str(count))
-    return count
+    f.seek(0)
+    f.write(str(count))
 
-def get_visit_count():
-    try:
-        with open(COUNTER_FILE, "r") as file:
-            return int(file.read().strip())
-    except:
-        return 0
+# UI
+st.set_page_config(page_title="SafeGuard AI", page_icon="🛡️")
+st.title("🛡️ SafeGuard AI - Personal Safety Assistant")
 
-# Tools
-def crime_check_tool(query: str) -> str:
-    dummy_data = {
-        "new york": "High risk in areas like Bronx and certain subway lines.",
-        "chicago": "Caution advised in South Side; some gang activity.",
-        "los angeles": "Some theft reported in Skid Row and DTLA areas.",
-        "your city": "No specific data, but always stay aware of surroundings."
-    }
-    for location in dummy_data:
-        if location in query.lower():
-            return dummy_data[location]
-    return "No known risks found, but always use general caution."
+st.markdown("Welcome to **SafeGuard AI** – your digital companion for personal safety.")
 
-tools = [
-    Tool(name="CrimeDataChecker", func=crime_check_tool, description="Use to check crime risk in any location or city.")
-]
+st.markdown("**Features:**")
+st.markdown("- Trigger emergency alerts")
+st.markdown("- Record when help is requested")
+st.markdown("- Track how many people used this tool")
 
-llm = Ollama(model="llama3")
+if st.button("🚨 Trigger Emergency Alert"):
+    st.warning("Emergency alert triggered! Help is being dispatched.")
+    st.info(f"Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-agent = initialize_agent(
-    tools,
-    llm,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=True
-)
-
-# Streamlit UI
-st.set_page_config(page_title="SafeRoute AI", layout="centered")
-
-st.title("SafeRoute AI Agent")
-st.markdown("Check route safety using local AI. Powered by LLaMA 3 and LangChain.")
-
-visit_count = increment_counter()
-st.markdown(f"**Total users so far:** {visit_count}")
-
-user_input = st.text_input("Enter your route or location (e.g., 'I'm going from Brooklyn to Manhattan'):")
-
-if user_input:
-    with st.spinner("Analyzing route..."):
-        response = agent.run(user_input)
-    st.success("Here's your safety insight:")
-    st.write(response)
+st.success(f"Total users who visited: **{count}**")
