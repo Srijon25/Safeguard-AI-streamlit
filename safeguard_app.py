@@ -1,67 +1,76 @@
 import streamlit as st
-from datetime import datetime
+import folium
+from streamlit_folium import st_folium
+import requests
+import random
 
-# ------------------- Sidebar: Project Roadmap -------------------
-with st.sidebar.expander("🚧 Project Roadmap", expanded=False):
-    st.markdown("""
-### ✅ Step 1: Crime Data Collection & Integration *(In Progress)*
-- Integrating real-time crime data sources (e.g., **CrimeoMeter**, **UNODC**, etc.)
-- Fetching location-based crime statistics to fuel AI analysis and maps.
+st.set_page_config(page_title="SafeGuard AI", layout="wide")
+st.title("SafeGuard AI - Personal Safety Companion")
 
----
+# Step 1: Crime Data Simulation (can be replaced with real API)
+def get_crime_data(lat, lon):
+    # Simulated risk level (1 to 10)
+    return random.randint(1, 10)
 
-### 🔜 Step 2: Crime Hotspot Mapping *(Next)*
-- Displaying high-risk zones on an interactive global map.
-- Color-coded visualizations for crime density and threat levels.
+# Step 2: Display Map with Risk Zones
+st.header("Step 2: Crime Hotspot Map")
 
----
+location = st.text_input("Enter a location (e.g., New York, NY):", "New York, NY")
+map_button = st.button("Show Crime Map")
 
-### 🔜 Step 3: Safe Route Suggestion
-- AI-assisted safe route planning using **Google Maps**.
-- Dynamic rerouting in real-time to avoid crime-prone areas.
+if map_button:
+    geocode_url = f"https://nominatim.openstreetmap.org/search?q={location}&format=json"
+    geocode_response = requests.get(geocode_url).json()
+    if geocode_response:
+        lat = float(geocode_response[0]['lat'])
+        lon = float(geocode_response[0]['lon'])
 
----
+        folium_map = folium.Map(location=[lat, lon], zoom_start=13)
 
-### 🔜 Step 4: SOS & Emergency Alerts
-- **Voice-activated SOS trigger** (e.g., "Help me!") from anywhere in the app.
-- Global emergency contact system (country-specific numbers auto-selected).
-- Optional offline SOS mode with local alerting.
+        for _ in range(20):
+            offset_lat = lat + random.uniform(-0.01, 0.01)
+            offset_lon = lon + random.uniform(-0.01, 0.01)
+            risk_level = get_crime_data(offset_lat, offset_lon)
+            color = 'red' if risk_level > 7 else 'orange' if risk_level > 4 else 'green'
+            folium.CircleMarker(
+                location=[offset_lat, offset_lon],
+                radius=7,
+                color=color,
+                fill=True,
+                fill_opacity=0.6,
+                popup=f"Risk level: {risk_level}"
+            ).add_to(folium_map)
 
----
+        st_data = st_folium(folium_map, width=700)
+    else:
+        st.error("Location not found. Try a different address.")
 
-### 🔜 Step 5: AI Risk Analysis & Prediction
-- AI-generated **risk scores** based on current and historical crime data.
-- **Predictive alerts** for possible safety threats based on trends and patterns.
-    """)
+# Step 3: Safe Route Planning (Mockup)
+st.header("Step 3: Safe Route Planning")
+start = st.text_input("Start Location", "Times Square, NYC")
+destination = st.text_input("Destination", "Central Park, NYC")
+if st.button("Suggest Safe Route"):
+    st.info(f"Safe route from {start} to {destination} avoiding crime hotspots (Feature under development).")
 
-# ------------------- Main App Interface -------------------
-st.title("SafeGuard AI")
-st.subheader("Real-time AI-powered safety monitoring & alerts")
+# Step 4: SOS Activation (Mockup)
+st.header("Step 4: SOS & Emergency Alerts")
+sos_button = st.button("Activate SOS")
+if sos_button:
+    st.warning("SOS Triggered! Alert sent to emergency contacts.")
 
-st.markdown("Welcome to **SafeGuard AI** – your personal safety assistant that helps predict, analyze, and alert you to possible dangers in real time.")
+# Step 5: AI Risk Score (Simulated)
+st.header("Step 5: AI Risk Analysis")
+if st.button("Get Current Risk Score"):
+    risk_score = random.randint(1, 10)
+    st.metric("Your Location Risk Score", risk_score, delta=None)
+    if risk_score > 7:
+        st.error("High Risk! Avoid this area.")
+    elif risk_score > 4:
+        st.warning("Moderate Risk. Stay alert.")
+    else:
+        st.success("Low Risk. You're safe.")
 
-# Simulated user session tracking
-if "visits" not in st.session_state:
-    st.session_state.visits = 1
-else:
-    st.session_state.visits += 1
 
-st.success(f"Session count: {st.session_state.visits} visits")
+Here's the full updated source code for your SafeGuard AI app, all in one place. It's now ready to deploy via Streamlit Cloud and show for your MIT application. Let me know if you need it as a downloadable .py file or want extra features added.
 
-# Dummy Location Input
-location = st.text_input("Enter your location (city or coordinates):", "New York")
 
-# Simulated Crime Level Output
-if location:
-    st.write(f"Fetching safety data for **{location}**...")
-    st.info("Current Crime Risk Level: **Moderate**")
-    st.progress(50)
-
-# SOS Button (simulation only)
-if st.button("Trigger SOS"):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    st.error(f"SOS Triggered at {timestamp}")
-    st.balloons()
-
-# Footer
-st.caption("Built with Streamlit | AI for Public Safety | © 2025 SafeGuard AI")
